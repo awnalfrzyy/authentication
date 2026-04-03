@@ -26,16 +26,13 @@ public class LoginServvice {
     private final UserDetailsService userDetailsService;
 
     public LoginResult login(LoginCommand command) {
-        // Authenticate user
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(command.getEmail(), command.getPassword())
         );
 
-        // Get user details
         UserDetails userDetails = userDetailsService.loadUserByUsername(command.getEmail());
         UsersEntity user = usersRepository.findByEmail(command.getEmail()).orElseThrow();
 
-        // Generate JWT token
         String token = jwtService.generateToken(userDetails.getUsername());
 
         return new LoginResult(user.getId(), user.getEmail(), token);
