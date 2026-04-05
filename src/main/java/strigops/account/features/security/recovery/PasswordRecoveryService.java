@@ -14,8 +14,10 @@ import strigops.account.features.identity.entity.UsersEntity;
 
 import strigops.account.features.identity.repository.UsersRepository;
 import strigops.account.features.identity.repository.PasswordResetTokenRepository;
+import strigops.account.features.security.recovery.dto.ForgotPasswordRequest;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -26,6 +28,26 @@ public class PasswordRecoveryService {
     private final UsersRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final ApplicationEventPublisher eventPublisher;
+
+    @Transactional
+    public void sendRecoveryLink(ForgotPasswordRequest request){
+        UsersEntity user = userRepository.findByEmail(request.email())
+                .orElseThrow(() -> new IllegalArgumentException("If the email is registered, instructions will be sent."));
+
+        tokenRepository.deleteByUser(user);
+     String token = UUID.randomUUID().toString();
+     PasswordResetToken resetToken = PasswordResetToken.builder()
+             .token(token)
+             .user(user)
+             .expiredDate(LocalDateTime.now().plusMinutes(15))
+             .used(false)
+             .build();
+
+     tokenRepository.save(resetToken);
+
+     eventPublisher.publishEvent(new PasswordResetEvent(user.getEmail(), token));
+     log.info("Recovery link generated for user: {}", user.getId());
+    }
 
     @Transactional
     public void resetPassword(ResetPasswordCommand command) {
