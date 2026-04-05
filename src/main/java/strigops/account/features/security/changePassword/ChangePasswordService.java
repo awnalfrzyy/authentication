@@ -1,4 +1,4 @@
-package strigops.account.features.auth.changePassword;
+package strigops.account.features.security.changePassword;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -8,8 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.ws.rs.BadRequestException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import strigops.account.features.auth.changePassword.dto.ChangePasswordRequest;
-import strigops.account.internal.domain.repository.UsersRepository;
+import strigops.account.features.security.changePassword.dto.ChangePasswordRequest;
+import strigops.account.features.identity.repository.UsersRepository;
 
 @Service
 @Slf4j

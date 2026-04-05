@@ -1,4 +1,4 @@
-package strigops.account.internal.domain.entity;
+package strigops.account.features.identity.entity;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -43,9 +43,17 @@ public class PasswordResetToken {
     private boolean used = false;
 
     @Column(nullable = false)
-    private LocalDateTime expiryDate;
+    private LocalDateTime expiredDate;
 
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime createdAt;
+
+    public boolean isExpired() {
+        return LocalDateTime.now().isAfter(this.expiredDate);
+    }
+
+    public boolean isValid() {
+        return !used && !isExpired();
+    }
 }

@@ -1,4 +1,4 @@
-package strigops.account.internal.domain.entity;
+package strigops.account.features.identity.entity;
 
 import java.time.LocalDateTime;
 import java.util.UUID;

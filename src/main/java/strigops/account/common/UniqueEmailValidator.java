@@ -5,7 +5,7 @@ import org.springframework.stereotype.Component;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import strigops.account.internal.domain.repository.UsersRepository;
+import strigops.account.features.identity.repository.UsersRepository;
 
 @Component
 public class UniqueEmailValidator implements ConstraintValidator<UniqueEmail, String> {

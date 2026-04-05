@@ -15,8 +15,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import strigops.account.features.auth.changePassword.ChangePasswordService;
-import strigops.account.features.auth.changePassword.dto.ChangePasswordRequest;
 import strigops.account.features.auth.login.LoginService;
 import strigops.account.features.auth.login.command.LoginCommand;
 import strigops.account.features.auth.login.command.LoginResult;
@@ -29,6 +27,8 @@ import strigops.account.features.auth.register.command.CreateUserCommand;
 import strigops.account.features.auth.register.command.UserRegistrationResult;
 import strigops.account.features.auth.register.dto.RegisterUserRequest;
 import strigops.account.features.auth.register.dto.RegisterUserResponse;
+import strigops.account.features.security.changePassword.ChangePasswordService;
+import strigops.account.features.security.changePassword.dto.ChangePasswordRequest;
 import strigops.account.internal.infrastructure.config.OtpService;
 
 @Component
