@@ -52,11 +52,11 @@ public class PasswordRecoveryService {
     @Transactional
     public void resetPassword(ResetPasswordCommand command) {
         PasswordResetToken resetToken = tokenRepository.findByToken(command.token())
-                .orElseThrow(() -> new IllegalArgumentException("Token tidak valid atau tidak ditemukan"));
+                .orElseThrow(() -> new IllegalArgumentException("Token is invalid or not found"));
 
         if (!resetToken.isValid()) {
             tokenRepository.delete(resetToken);
-            throw new IllegalStateException("Token sudah kedaluwarsa atau sudah pernah digunakan");
+            throw new IllegalStateException("Token has expired or has already been used");
         }
 
         UsersEntity user = resetToken.getUser();
