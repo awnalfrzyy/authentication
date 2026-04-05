@@ -9,8 +9,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import strigops.account.internal.domain.entity.UsersEntity;
-import strigops.account.internal.domain.repository.UsersRepository;
+import strigops.account.features.identity.entity.UsersEntity;
+import strigops.account.features.identity.repository.UsersRepository;
 import java.util.Locale;
 
 @Service

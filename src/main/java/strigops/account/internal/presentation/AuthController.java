@@ -15,8 +15,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import strigops.account.features.auth.changePassword.ChangePasswordService;
-import strigops.account.features.auth.changePassword.dto.ChangePasswordRequest;
 import strigops.account.features.auth.login.LoginService;
 import strigops.account.features.auth.login.command.LoginCommand;
 import strigops.account.features.auth.login.command.LoginResult;
@@ -29,7 +27,14 @@ import strigops.account.features.auth.register.command.CreateUserCommand;
 import strigops.account.features.auth.register.command.UserRegistrationResult;
 import strigops.account.features.auth.register.dto.RegisterUserRequest;
 import strigops.account.features.auth.register.dto.RegisterUserResponse;
+import strigops.account.features.security.changePassword.ChangePasswordService;
+import strigops.account.features.security.changePassword.dto.ChangePasswordRequest;
+import strigops.account.features.security.recovery.PasswordRecoveryService;
+import strigops.account.features.security.recovery.command.ResetPasswordCommand;
+import strigops.account.features.security.recovery.dto.ForgotPasswordRequest;
 import strigops.account.internal.infrastructure.config.OtpService;
+
+import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
@@ -40,6 +45,7 @@ public class AuthController {
     private final LoginService loginService;
     private final OtpService otpService;
     private final ChangePasswordService changePasswordService;
+    private final PasswordRecoveryService passwordRecoveryService;
 
     @POST
     @Path("/v1/send-otp")
@@ -154,4 +160,21 @@ public class AuthController {
         return Response.ok("{\"message\": \"Logged out successfully\"}").build();
     }
 
+    @POST
+    @Path("/v1/forgot")
+    public Response forgotPassword(@Valid ForgotPasswordRequest request){
+        passwordRecoveryService.sendRecoveryLink(request);
+        return Response.ok(Map.of(
+                "message", "If the email is registered, instructions will be sent to your email."
+        )).build();
+    }
+
+    @POST
+    @Path("/v1/reset")
+    public Response resetPassword(@Valid ResetPasswordCommand command){
+        passwordRecoveryService.resetPassword(command);
+        return Response.ok(Map.of(
+                "message", "Password successfully updated. Please log in again."
+        )).build();
+    }
 }

@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import lombok.RequiredArgsConstructor;
 import strigops.account.features.auth.login.command.LoginCommand;
 import strigops.account.features.auth.login.command.LoginResult;
-import strigops.account.internal.domain.entity.UsersEntity;
-import strigops.account.internal.domain.repository.UsersRepository;
+import strigops.account.features.identity.entity.UsersEntity;
+import strigops.account.features.identity.repository.UsersRepository;
 import strigops.account.internal.infrastructure.config.JwtService;
 
 @Service

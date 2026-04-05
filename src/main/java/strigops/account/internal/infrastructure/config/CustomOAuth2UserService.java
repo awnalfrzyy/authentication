@@ -9,10 +9,10 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import lombok.RequiredArgsConstructor;
-import strigops.account.internal.domain.entity.SosialAccounts;
-import strigops.account.internal.domain.entity.UsersEntity;
-import strigops.account.internal.domain.repository.SosialAccountsRepository;
-import strigops.account.internal.domain.repository.UsersRepository;
+import strigops.account.features.identity.entity.SosialAccounts;
+import strigops.account.features.identity.entity.UsersEntity;
+import strigops.account.features.identity.repository.SosialAccountsRepository;
+import strigops.account.features.identity.repository.UsersRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -30,7 +30,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         if (id == null) {
             id = oauth2User.getAttribute("sub");
         }
-        if (id == null){
+        if (id == null) {
             throw new OAuth2AuthenticationException("Provider ID not found");
         }
         System.out.println(oauth2User.getAttributes());

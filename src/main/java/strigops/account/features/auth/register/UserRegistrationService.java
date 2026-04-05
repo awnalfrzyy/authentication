@@ -8,8 +8,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import strigops.account.features.auth.register.command.CreateUserCommand;
 import strigops.account.features.auth.register.command.UserRegistrationResult;
-import strigops.account.internal.domain.entity.UsersEntity;
-import strigops.account.internal.domain.repository.UsersRepository;
+import strigops.account.features.identity.entity.UsersEntity;
+import strigops.account.features.identity.repository.UsersRepository;
 
 @Service
 @RequiredArgsConstructor
