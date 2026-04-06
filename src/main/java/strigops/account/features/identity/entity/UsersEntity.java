@@ -50,6 +50,10 @@ public class UsersEntity {
 
     @Builder.Default
     private boolean active = true;
+    private boolean mfa = false;
+
+    @Column(nullable = false)
+    private String mfaSecret;
 
     @CreationTimestamp
     @Column(updatable = false)
