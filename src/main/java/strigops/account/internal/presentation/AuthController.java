@@ -125,10 +125,6 @@ public class AuthController {
                 request.email().trim().toLowerCase(),
                 request.password());
 
-        // UsersEntity user = loginService.authenticate(
-        // request.email().trim().toLowerCase(),
-        // request.password()
-        // );
         String userAgent = httpRequest.getHeader("User-Agent");
         String ip = httpRequest.getRemoteAddr();
 
@@ -139,7 +135,7 @@ public class AuthController {
             cookie.setHttpOnly(true);
             cookie.setSecure(false);
             cookie.setPath("/");
-            cookie.setMaxAge(7 * 24 * 60 * 60); // 7 hari
+            cookie.setMaxAge(7 * 24 * 60 * 60);
             response.addCookie(cookie);
 
             log.info("User login successful for email: {}", request.email());

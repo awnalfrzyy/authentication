@@ -2,6 +2,12 @@ package strigops.account.ui.components
 
 import kotlinx.html.*
 
+enum class CustomButtonType(val value: String) {
+    button("button"),
+    submit("submit"),
+    reset("reset")
+}
+
 enum class ButtonVariant (val classes: String){
     PRIMARY("bg-blue-600 hover:bg-blue-700 text-white"),
     DANGER("bg-red-600 hover:bg-red-700 text-white"),
@@ -12,11 +18,11 @@ enum class ButtonVariant (val classes: String){
 fun FlowContent.Button(
     text: String,
     variant: ButtonVariant = ButtonVariant.PRIMARY,
-    type: ButtonType = ButtonType.button,
+    type: CustomButtonType = CustomButtonType.button,
     onClick: String = "",
     fullWidth: Boolean = false,
 ) {
-    button(type = type, classes = "${variant.classes} px-5 py-2.5 rounded-lg font-medium transition-all duration-200 focus:ring-4 focus:outline-none ${if (fullWidth) "w-full" else ""}") 
+    button(type = kotlinx.html.ButtonType.valueOf(type.value), classes = "${variant.classes} px-5 py-2.5 rounded-lg font-medium transition-all duration-200 focus:ring-4 focus:outline-none ${if (fullWidth) "w-full" else ""}") 
     {
         if (onClick.isNotEmpty()) attributes["onclick"] = onClick
         +text
