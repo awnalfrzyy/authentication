@@ -1,6 +1,5 @@
 HELP.md
 AGENT.md
-EMAIL_OTP_SETUP.md
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
@@ -34,4 +33,9 @@ build/
 ### VS Code ###
 .vscode/
 
-.env.*
+.env
+account.iml
+/docker/**
+
+/src/main/resources/application.properties
+/src/main/resources/application.properties/**

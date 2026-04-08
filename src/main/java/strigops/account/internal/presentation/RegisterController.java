@@ -1,0 +1,25 @@
+package strigops.account.internal.presentation;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import strigops.account.features.auth.register.UserRegistrationService;
+import strigops.account.features.auth.register.command.CreateUserCommand;
+import strigops.account.features.auth.register.command.UserRegistrationResult;
+
+@RestController
+@RequestMapping("api/v1/auth")
+@RequiredArgsConstructor
+public class RegisterController {
+
+    @Autowired
+    private UserRegistrationService registrationService;
+
+    @PostMapping("/register")
+    public ResponseEntity<UserRegistrationResult> register(@Valid @RequestBody CreateUserCommand command){
+        var result = registrationService.register(command);
+        return ResponseEntity.ok(result);
+    }
+}

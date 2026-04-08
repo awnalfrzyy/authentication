@@ -10,7 +10,7 @@ GREEN := \033[0;32m
 YELLOW := \033[1;33m
 NC := \033[0m 
 
-.PHONY: help install-deps docker-setup test run run-with-test build-and-run clean
+.PHONY: help install-deps docker-setup test run run-with-test build-and-run clean docker-up docker-down migrate dev setup logs db-info
 
 help:
 	@echo "$(GREEN)Available targets:$(NC)"
@@ -21,6 +21,13 @@ help:
 	@echo "  $(YELLOW)run-with-test$(NC)    - Run program with tests"
 	@echo "  $(YELLOW)build-and-run$(NC)    - Build, run program, and offer cleanup option"
 	@echo "  $(YELLOW)clean$(NC)            - Clean build artifacts"
+	@echo "  $(YELLOW)docker-up$(NC)        - Start Docker services (PostgreSQL + Redis)"
+	@echo "  $(YELLOW)docker-down$(NC)      - Stop Docker services"
+	@echo "  $(YELLOW)migrate$(NC)          - Run database migrations"
+	@echo "  $(YELLOW)dev$(NC)              - Start development environment (Docker + App)"
+	@echo "  $(YELLOW)setup$(NC)            - Quick setup for new developers"
+	@echo "  $(YELLOW)logs$(NC)             - Show Docker logs"
+	@echo "  $(YELLOW)db-info$(NC)          - Show database connection info"
 
 install-deps:
 	@echo "$(GREEN)Installing dependencies...$(NC)"
@@ -39,9 +46,9 @@ docker-setup:
 	@echo "$(GREEN)Setting up Docker containers...$(NC)"
 	@echo "$(YELLOW)Make sure Docker and Docker Compose are installed.$(NC)"
 	@echo "$(YELLOW)Starting containers...$(NC)"
-	docker-compose -f docker-compose.dev.yaml up -d
+	docker compose -f docker-compose.yaml up -d
 	@echo "$(GREEN)Docker containers are running.$(NC)"
-	@echo "$(YELLOW)To stop containers: docker-compose -f docker-compose.dev.yaml down$(NC)"
+	@echo "$(YELLOW)To stop containers: docker compose -f docker-compose.yaml down$(NC)"
 
 test:
 	@echo "$(GREEN)Running tests...$(NC)"
@@ -132,3 +139,57 @@ ifeq ($(OS),Windows)
 	.\mvnw.cmd clean
 endif
 	@echo "$(GREEN)Clean completed.$(NC)"
+
+# Start Docker services
+docker-up:
+	@echo "🐳 Starting Docker services..."
+	docker compose up -d
+	@echo "✅ Services started!"
+	@echo "📊 PostgreSQL: localhost:5433"
+	@echo "🔴 Redis: localhost:6380"
+
+# Stop Docker services
+docker-down:
+	@echo "🛑 Stopping Docker services..."
+	docker compose down
+	@echo "✅ Services stopped!"
+
+# Run database migrations
+migrate:
+	@echo "🔄 Running database migrations..."
+	./scripts/run-migrations.sh
+
+# Start development environment
+dev: docker-up migrate
+	@echo "🚀 Starting development environment..."
+	@echo "⏳ Waiting for services to be ready..."
+	sleep 5
+	@echo "🎯 Starting application..."
+	./mvnw spring-boot:run
+
+# Quick setup for new developers
+setup:
+	@echo "🔧 Setting up development environment..."
+	@if [ ! -f .env ]; then \
+		cp .env.example .env; \
+		echo "✅ Created .env from template"; \
+		echo "⚠️  Please edit .env with your actual values"; \
+	else \
+		echo "✅ .env already exists"; \
+	fi
+	@mkdir -p logs
+	@echo "✅ Setup complete!"
+
+# Show logs
+logs:
+	docker compose logs -f
+
+# Database connection info
+db-info:
+	@echo "📊 Database Connection Info:"
+	@echo "Host: localhost:5433"
+	@echo "Database: strigoaccountdb"
+	@echo "User: strigo_account"
+	@echo ""
+	@echo "Connect with:"
+	@echo "psql -h localhost -p 5433 -U strigo_account -d strigoaccountdb"
