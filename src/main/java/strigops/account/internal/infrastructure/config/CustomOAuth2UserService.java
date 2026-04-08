@@ -1,82 +1,90 @@
 package strigops.account.internal.infrastructure.config;
 
-import java.util.Optional;
-
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
-
-import lombok.RequiredArgsConstructor;
-import strigops.account.features.identity.entity.SosialAccounts;
+import strigops.account.features.identity.entity.SocialAccounts;
 import strigops.account.features.identity.entity.UsersEntity;
-import strigops.account.features.identity.repository.SosialAccountsRepository;
+import strigops.account.features.identity.repository.SocialAccountsRepository;
 import strigops.account.features.identity.repository.UsersRepository;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
     private final UsersRepository usersRepository;
-    private final SosialAccountsRepository sosialAccountsRepository;
+    private final SocialAccountsRepository socialAccountsRepository;
 
     @Override
+    @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        OAuth2User oauth2User = getOAuth2User(userRequest);
+        OAuth2User oauth2User = super.loadUser(userRequest);
 
         String provider = userRequest.getClientRegistration().getRegistrationId();
-        Object id = oauth2User.getAttribute("id");
-        if (id == null) {
-            id = oauth2User.getAttribute("sub");
-        }
-        if (id == null) {
-            throw new OAuth2AuthenticationException("Provider ID not found");
-        }
-        System.out.println(oauth2User.getAttributes());
-        String providerId = id.toString();
+
+        String providerId = Optional.ofNullable(oauth2User.getAttribute("sub"))
+                .map(Object::toString)
+                .orElseGet(() -> {
+                    Object id = oauth2User.getAttribute("id");
+                    if (id == null) throw new OAuth2AuthenticationException("Provider ID not found");
+                    return id.toString();
+                });
+
         String email = oauth2User.getAttribute("email");
         if (email == null) {
             throw new OAuth2AuthenticationException("Email not provided by OAuth2 provider");
         }
+
         String name = oauth2User.getAttribute("name");
+        String picture = oauth2User.getAttribute("picture");
 
-        Optional<SosialAccounts> existingSocial = sosialAccountsRepository.findByProviderAndProviderUserId(provider, providerId);
+        log.info("Processing OAuth2 login for provider: {}, email: {}", provider, email);
 
-        if (existingSocial.isPresent()) {
-            UsersEntity user = existingSocial.get().getUser();
-            return new CustomOAuth2User(oauth2User, user.getId(), user.getEmail());
-        }
+        return socialAccountsRepository.findByProviderAndProviderUserId(provider, providerId)
+                .map(social -> {
+                    UsersEntity user = social.getUser();
+                    return new CustomOAuth2User(oauth2User, user.getId(), user.getEmail());
+                })
+                .orElseGet(() -> {
+                    UsersEntity user = processUserAndSocial(email, name, picture, provider, providerId, oauth2User);
+                    return new CustomOAuth2User(oauth2User, user.getId(), user.getEmail());
+                });
+    }
 
-        Optional<UsersEntity> existingUser = usersRepository.findByEmail(email.toLowerCase());
-        UsersEntity user;
+    private UsersEntity processUserAndSocial(String email, String name, String picture,
+                                             String provider, String providerId, OAuth2User oauth2User) {
 
-        if (existingUser.isPresent()) {
-            user = existingUser.get();
-        } else {
-            user = UsersEntity.builder()
-                    .email(email.toLowerCase())
-                    .username(name)
-                    .active(true)
-                    .build();
-            user = usersRepository.save(user);
-        }
+        UsersEntity user = usersRepository.findByEmail(email.toLowerCase())
+                .orElseGet(() -> {
+                    log.info("Creating new user for OAuth2: {}", email);
+                    return usersRepository.save(UsersEntity.builder()
+                            .email(email.toLowerCase())
+                            .username(name)
+                            .active(true)
+                            .build());
+                });
 
-        SosialAccounts socialAccount = SosialAccounts.builder()
+        SocialAccounts socialAccount = SocialAccounts.builder()
                 .user(user)
                 .provider(provider)
                 .providerUserId(providerId)
                 .username(name)
                 .email(email.toLowerCase())
-                .profilePictureUrl(oauth2User.getAttribute("picture"))
+                .profilePictureUrl(picture)
                 .accessToken("")
                 .build();
-        sosialAccountsRepository.save(socialAccount);
 
-        return new CustomOAuth2User(oauth2User, user.getId(), user.getEmail());
-    }
+        socialAccountsRepository.save(socialAccount);
+        log.info("Linked social account for user: {}", email);
 
-    protected OAuth2User getOAuth2User(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        return super.loadUser(userRequest);
+        return user;
     }
 }

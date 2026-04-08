@@ -2,7 +2,7 @@ package strigops.account.features.session;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
-import jakarta.inject.Inject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import strigops.account.features.auth.login.dto.LoginResponse;
@@ -10,18 +10,18 @@ import strigops.account.features.identity.entity.UsersEntity;
 import strigops.account.features.identity.entity.UsersSession;
 import strigops.account.features.identity.repository.UsersSessionRepostory;
 import strigops.account.features.security.mfa.MultiFactorService;
-import strigops.account.internal.infrastructure.config.JwtService;
+import strigops.account.internal.infrastructure.security.JwtService;
 
 @Service
 public class SessionService {
 
-    @Inject
+    @Autowired
     JwtService jwtService;
 
-    @Inject
+    @Autowired
     MultiFactorService mfaService;
 
-    @Inject
+    @Autowired
     UsersSessionRepostory sessionRepository;
 
     @Transactional
@@ -50,7 +50,7 @@ public class SessionService {
         }
 
         String access = jwtService.createAccessToken(user, sessionId.toString());
-        String refresh = jwtService.CreateRefreshToken(sessionId.toString());
+        String refresh = jwtService.createRefreshToken(sessionId.toString());
 
         return LoginResponse.success(user.getId(), user.getEmail(), access, refresh);
     }

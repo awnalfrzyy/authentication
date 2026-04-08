@@ -1,5 +1,6 @@
 package strigops.account.features.auth.register;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -10,14 +11,22 @@ import strigops.account.features.auth.register.command.CreateUserCommand;
 import strigops.account.features.auth.register.command.UserRegistrationResult;
 import strigops.account.features.identity.entity.UsersEntity;
 import strigops.account.features.identity.repository.UsersRepository;
+import strigops.account.features.auth.otp.OtpService;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class UserRegistrationService {
 
-    private final UsersRepository usersRepository;
-    private final PasswordEncoder passwordEncoder;
+    @Autowired
+    private UsersRepository usersRepository;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private OtpService otpService;
+
 
     @Transactional
     public UserRegistrationResult register(CreateUserCommand command) {
@@ -32,10 +41,26 @@ public class UserRegistrationService {
                 .email(command.email().trim().toLowerCase())
                 .password(passwordEncoder.encode(command.password()))
                 .username(command.username())
+                .active(false)
                 .build();
 
         var savedUser = usersRepository.save(newUser);
-        log.info("User created with id={}", savedUser.getId());
-        return new UserRegistrationResult(savedUser.getId(), savedUser.getEmail());
+
+        otpService.sendAndSaveOtp(savedUser.getEmail(), savedUser.getUsername());
+
+        return new UserRegistrationResult(
+                savedUser.getId(),
+                savedUser.getEmail(),
+                savedUser.getUsername()
+                );
+    }
+
+    @Transactional
+    public void enableUser(String email){
+        usersRepository.findByEmail(email).ifPresent(user -> {
+            user.setActive(true);
+            usersRepository.save(user);
+            log.info("User {} is now active", email);
+        });
     }
 }
