@@ -41,7 +41,6 @@ fun HTML.sendOtpPage(email: String? = null, errorMessage: String? = null) {
                             label = "Email address",
                             name = "email",
                             inputType = InputType.email,
-                            icon = StrigoIcon.EMAIL,
                             placeholder = "Enter your email",
                             value = email ?: ""
                     )

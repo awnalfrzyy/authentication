@@ -8,22 +8,28 @@ enum class CustomButtonType(val value: String) {
     reset("reset")
 }
 
-enum class ButtonVariant (val classes: String){
+enum class ButtonVariant(val classes: String) {
     PRIMARY("bg-blue-600 hover:bg-blue-700 text-white"),
     DANGER("bg-red-600 hover:bg-red-700 text-white"),
     SUCCESS("bg-green-600 hover:bg-green-700 text-white"),
-    GHOST("bg-transparent border border-gray-300 hover:bg-gray-100 text-gray-700")
+    GHOST("bg-transparent border border-gray-300 hover:bg-gray-100 text-gray-700"),
+    OUTLINE(
+            "border border-gray-300 text-gray-700 bg-white hover:bg-gray-50 focus:ring-2 focus:ring-gray-500"
+    )
 }
 
 fun FlowContent.Button(
-    text: String,
-    variant: ButtonVariant = ButtonVariant.PRIMARY,
-    type: CustomButtonType = CustomButtonType.button,
-    onClick: String = "",
-    fullWidth: Boolean = false,
+        text: String,
+        variant: ButtonVariant = ButtonVariant.PRIMARY,
+        type: CustomButtonType = CustomButtonType.button,
+        onClick: String = "",
+        fullWidth: Boolean = false
 ) {
-    button(type = kotlinx.html.ButtonType.valueOf(type.value), classes = "${variant.classes} px-5 py-2.5 rounded-lg font-medium transition-all duration-200 focus:ring-4 focus:outline-none ${if (fullWidth) "w-full" else ""}") 
-    {
+    button(
+            type = kotlinx.html.ButtonType.valueOf(type.value),
+            classes =
+                    "${variant.classes} px-5 py-2.5 rounded-lg font-medium transition-all duration-200 focus:ring-4 focus:outline-none ${if (fullWidth) "w-full" else ""}"
+    ) {
         if (onClick.isNotEmpty()) attributes["onclick"] = onClick
         +text
     }

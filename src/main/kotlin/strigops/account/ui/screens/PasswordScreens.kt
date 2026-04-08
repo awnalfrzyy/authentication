@@ -47,7 +47,6 @@ fun HTML.forgotPasswordPage(
                                 label = "Email address",
                                 name = "email",
                                 inputType = InputType.email,
-                                icon = StrigoIcon.EMAIL,
                                 placeholder = "Enter your email address",
                                 value = email ?: ""
                         )
@@ -118,35 +117,32 @@ fun HTML.resetPasswordPage(token: String, errorMessage: String? = null) {
                         Input(
                                 label = "New password",
                                 name = "newPassword",
-                                inputType = InputType.password,
-                                icon = StrigoIcon.PASSWORD,
-                                placeholder = "Enter your new password"
+                                inputType = InputType.password
                         )
 
                         Input(
                                 label = "Confirm new password",
                                 name = "confirmPassword",
                                 inputType = InputType.password,
-                                icon = StrigoIcon.PASSWORD,
                                 placeholder = "Confirm your new password"
                         )
+
+                        div(classes = "mt-6") {
+                            Button(
+                                    text = "Reset password",
+                                    variant = ButtonVariant.PRIMARY,
+                                    type = CustomButtonType.submit,
+                                    fullWidth = true
+                            )
+                        }
                     }
 
-                    div(classes = "mt-6") {
-                        Button(
-                                text = "Reset password",
-                                variant = ButtonVariant.PRIMARY,
-                                type = CustomButtonType.submit,
-                                fullWidth = true
-                        )
+                    div(classes = "mt-6 text-center") {
+                        a(
+                                href = "/auth/login",
+                                classes = "font-medium text-blue-600 hover:text-blue-500"
+                        ) { +"Back to sign in" }
                     }
-                }
-
-                div(classes = "mt-6 text-center") {
-                    a(
-                            href = "/auth/login",
-                            classes = "font-medium text-blue-600 hover:text-blue-500"
-                    ) { +"Back to sign in" }
                 }
             }
         }

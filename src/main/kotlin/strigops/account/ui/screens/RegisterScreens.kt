@@ -47,7 +47,6 @@ fun HTML.registerPage(errorMessage: String? = null, successMessage: String? = nu
                                 label = "Email address",
                                 name = "email",
                                 inputType = InputType.email,
-                                icon = StrigoIcon.EMAIL,
                                 placeholder = "Enter your email",
                                 required = true
                         )
@@ -56,7 +55,6 @@ fun HTML.registerPage(errorMessage: String? = null, successMessage: String? = nu
                                 label = "Username",
                                 name = "username",
                                 inputType = InputType.text,
-                                icon = StrigoIcon.USER,
                                 placeholder = "Choose a username",
                                 required = true
                         )
@@ -65,7 +63,6 @@ fun HTML.registerPage(errorMessage: String? = null, successMessage: String? = nu
                                 label = "Password",
                                 name = "password",
                                 inputType = InputType.password,
-                                icon = StrigoIcon.PASSWORD,
                                 placeholder = "Create a strong password",
                                 required = true
                         )
@@ -74,7 +71,6 @@ fun HTML.registerPage(errorMessage: String? = null, successMessage: String? = nu
                                 label = "Confirm password",
                                 name = "confirmPassword",
                                 inputType = InputType.password,
-                                icon = StrigoIcon.PASSWORD,
                                 placeholder = "Confirm your password",
                                 required = true
                         )

@@ -1,40 +1,48 @@
 package strigops.account.ui.screens
 
 import kotlinx.html.*
-import strigops.account.ui.assets.*
 import strigops.account.ui.components.*
+import strigops.account.ui.components.Alert
 import strigops.account.ui.layouts.*
 
 fun HTML.loginPage(errorMessage: String? = null) {
     mainLayout(title = "Sign in - StrigoAccount") {
-        div(classes = "flex-grow flex items-center justify-center px-4 py-12 h-screen") {
-            div(
-                    classes =
-                            "w-full max-w-md bg-white dark:bg-gray-800 shadow-2xl rounded-3xl p-8 space-y-6 border border-gray-100 dark:border-gray-700 transition-all duration-300 overflow-y-auto"
-            ) {
+        div(
+                classes =
+                        "min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8"
+        ) {
+            div(classes = "w-full max-w-md space-y-8") {
                 div(classes = "text-center") {
-                    h2(
-                            classes =
-                                    "text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight"
-                    ) { +"Welcome back" }
-                    p(classes = "mt-2 text-sm text-gray-500 dark:text-gray-400") {
-                        +"Sign in to continue to your developer dashboard."
+                    img(
+                            classes = "mx-auto h-12 w-auto",
+                            src =
+                                    "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%234285f4'%3E%3Cpath d='M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z'/%3E%3Cpath d='M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z' fill='%2334a853'/%3E%3Cpath d='M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z' fill='%23fbbc05'/%3E%3Cpath d='M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z' fill='%23ea4335'/%3E%3C/svg%3E",
+                            alt = "Strigo Account"
+                    )
+                    h2(classes = "mt-6 text-3xl font-extrabold text-gray-900") {
+                        +"Sign in to your account"
+                    }
+                    p(classes = "mt-2 text-sm text-gray-600") {
+                        +"Or "
+                        a(
+                                href = "/auth/register",
+                                classes = "font-medium text-blue-600 hover:text-blue-500"
+                        ) { +"create a new account" }
                     }
                 }
 
-                errorMessage?.let {
-                    div(classes = "animate-pulse") { Alert(it, type = AlertType.ERROR) }
+                if (errorMessage != null) {
+                    Alert(errorMessage, type = AlertType.ERROR)
                 }
 
-                form(action = "/auth/login", method = FormMethod.post, classes = "space-y-6") {
+                form(action = "/auth/login", method = FormMethod.post, classes = "mt-8 space-y-6") {
                     input(type = InputType.hidden, name = "_csrf") {}
 
                     div(classes = "space-y-4") {
                         Input(
-                                label = "Email or Username",
+                                label = "Email address",
                                 name = "email",
                                 inputType = InputType.email,
-                                icon = StrigoIcon.EMAIL,
                                 placeholder = "Enter your email"
                         )
 
@@ -42,7 +50,6 @@ fun HTML.loginPage(errorMessage: String? = null) {
                                 label = "Password",
                                 name = "password",
                                 inputType = InputType.password,
-                                icon = StrigoIcon.PASSWORD,
                                 placeholder = "Enter your password"
                         )
                     }
@@ -53,74 +60,59 @@ fun HTML.loginPage(errorMessage: String? = null) {
                                     type = InputType.checkBox,
                                     name = "remember-me",
                                     classes =
-                                            "custom-checkbox h-4 w-4 text-blue-600 border-gray-300 rounded transition duration-150 ease-in-out"
+                                            "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                             ) { id = "remember-me" }
-                            label(classes = "ml-2 block text-sm text-gray-700 dark:text-gray-300") {
-                                attributes["for"] = "remember-me"
-                                +"Remember me for 30 days"
+                            label(classes = "ml-2 block text-sm text-gray-900") {
+                                htmlFor = "remember-me"
+                                +"Remember me"
                             }
                         }
 
-                        a(
-                                href = "/auth/forgot",
-                                classes =
-                                        "text-sm font-semibold text-blue-600 hover:text-blue-500 transition-colors"
-                        ) { +"Forgot password?" }
+                        div(classes = "text-sm") {
+                            a(
+                                    href = "/auth/forgot",
+                                    classes = "font-medium text-blue-600 hover:text-blue-500"
+                            ) { +"Forgot your password?" }
+                        }
                     }
 
-                    Button(
-                            text = "Login",
-                            variant = ButtonVariant.PRIMARY,
-                            type = CustomButtonType.submit,
-                            fullWidth = true
-                    )
+                    div(classes = "mt-6") {
+                        Button(
+                                text = "Sign in",
+                                variant = ButtonVariant.PRIMARY,
+                                type = CustomButtonType.submit,
+                                fullWidth = true
+                        )
+                    }
                 }
 
-                div(classes = "relative my-6") {
-                    div(classes = "absolute inset-0 flex items-center") {
-                        div(classes = "w-full border-t border-gray-200 dark:border-gray-700") {}
-                    }
-                    div(classes = "relative flex justify-center text-sm uppercase") {
-                        span(classes = "px-4 bg-white dark:bg-gray-800 text-gray-400 font-medium") {
-                            +"OR"
+                div(classes = "mt-6") {
+                    div(classes = "relative") {
+                        div(classes = "absolute inset-0 flex items-center") {
+                            div(classes = "w-full border-t border-gray-300") {}
+                        }
+                        div(classes = "relative flex justify-center text-sm") {
+                            span(classes = "px-2 bg-gray-50 text-gray-500") { +"Or continue with" }
                         }
                     }
                 }
 
-                div {
+                div(classes = "mt-6") {
                     a(
-                            href = "#",
+                            href = "/auth/google",
                             classes =
-                                    "w-full flex items-center justify-center gap-3 py-3 px-4 border border-gray-300 dark:border-gray-600 rounded-xl bg-white dark:bg-transparent text-sm font-semibold text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 transition-all duration-200 group"
+                                    "w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                     ) {
                         img(
-                                classes = "w-5 h-5 group-hover:scale-110 transition-transform",
+                                classes = "w-5 h-5 mr-2",
                                 src =
-                                        "https://www.gstatic.com/images/branding/product/1x/gsa_512dp.png",
+                                        "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z' fill='%234285f4'/%3E%3Cpath d='M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z' fill='%2334a853'/%3E%3Cpath d='M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z' fill='%23fbbc05'/%3E%3Cpath d='M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z' fill='%23ea4335'/%3E%3C/svg%3E",
                                 alt = "Google"
                         )
-                        span { +"Continue with Google" }
+                        span { +"Sign in with Google" }
                     }
-                }
-
-                p(classes = "text-center text-sm text-gray-500 dark:text-gray-400") {
-                    +"Don't have an account? "
-                    a(
-                            href = "/auth/register",
-                            classes =
-                                    "font-bold text-blue-600 hover:text-blue-500 underline-offset-4 hover:underline"
-                    ) { +"Sign up for free" }
                 }
             }
         }
-
-        // footer(classes = "py-2 text-center text-xs text-gray-400 dark:text-gray-600 w-full") {
-        //     div(classes = "flex justify-center gap-6 mb-2") {
-        //         a(href = "#") { +"Privacy Policy" }
-        //         a(href = "#") { +"Terms of Service" }
-        //         a(href = "#") { +"Contact Support" }
-        //     }
-        //     p { +"© 2024 Architect Serenity. All rights reserved." }
-        // }
     }
 }

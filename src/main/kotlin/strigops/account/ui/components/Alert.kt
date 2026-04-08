@@ -14,7 +14,9 @@ fun FlowContent.Alert(message: String, type: AlertType = AlertType.INFO) {
         role = "alert"
         span(classes = "mr-3 text-lg") { +type.icon }
         div {
-            span(classes = "font-semibold") { +type.name.lowercase().replaceFirstChar { it.uppercase() } }
+            span(classes = "font-semibold") {
+                +type.name.lowercase().replaceFirstChar { it.uppercase() }
+            }
             +": $message"
         }
     }
